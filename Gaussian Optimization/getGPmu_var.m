@@ -1,0 +1,24 @@
+%function [mu_t, var_t] = getGPmu_var(x,parm)
+function [mu_t, var_t] = getGPmu_var(x,parm)
+    sig_f = parm.theta(1);
+    l = parm.theta(2);
+    noise = parm.theta(3);
+    parm.theta;
+    x1 = parm.x1;
+    x2=parm.x2;%Observed data
+    % Query points - parm.xs
+    % observation - parm.ys
+    N = length(x1);
+    try
+        norm_y = parm.norm_y';
+    catch
+        norm_y = (parm.ys - mean(parm.ys))'; % fill out this part
+    end
+    K = compute_cov(x1,x2,sig_f,l,noise)
+    Kv = K_vec(x1,x2,x,sig_f,l)
+   
+   % todo - complete this part;
+    mu_t = Kv'/K*norm_y';
+%     var_t = kernel(xs,x,sig_f,l) - Kv'/(K)*Kv; 
+    var_t = kernel(x,x,x,sig_f,l) - Kv'/(K)*Kv;
+end
